@@ -30,7 +30,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws ServletException, IOException {
         String header = request.getHeader("Authorization");
-        // Se não houver Bearer token, segue o fluxo (rotas públicas ou será bloqueado depois)
         if (header == null || !header.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
@@ -50,7 +49,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             var auth = new UsernamePasswordAuthenticationToken(email, null, authorities);
             SecurityContextHolder.getContext().setAuthentication(auth);
         } catch (Exception ex) {
-            // Token inválido ou expirado → 401
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
