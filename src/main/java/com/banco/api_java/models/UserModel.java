@@ -1,16 +1,19 @@
 package com.banco.api_java.models;
 
+import com.banco.api_java.enums.Role;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.io.Serializable;
-import java.util.UUID;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "users")
 public class UserModel implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(nullable = false)
     private String name;
@@ -18,12 +21,22 @@ public class UserModel implements Serializable {
     @Column(nullable = false, unique = true)
     private String email;
 
-    public UUID getId() {
-        return id;
-    }
+    @JsonIgnore
+    @Column(nullable = false, length = 60) // hash BCrypt ~60 chars
+    private String password;
 
-    public void setId(UUID id) {
-        this.id = id;
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private AccountModel account;
+
+    @Enumerated(EnumType.STRING)
+    private Role role = Role.USER;
+
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    public Long getId() {
+        return id;
     }
 
     public String getName() {
@@ -40,5 +53,33 @@ public class UserModel implements Serializable {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public AccountModel getAccount() {
+        return account;
+    }
+
+    public void setAccount(AccountModel account) {
+        this.account = account;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 }

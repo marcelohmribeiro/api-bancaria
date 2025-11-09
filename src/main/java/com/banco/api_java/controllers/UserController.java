@@ -1,33 +1,46 @@
 package com.banco.api_java.controllers;
 
-import com.banco.api_java.dtos.UserRecordDto;
-import com.banco.api_java.models.UserModel;
+import com.banco.api_java.dtos.UserCreateDTO;
+import com.banco.api_java.dtos.UserDTO;
 import com.banco.api_java.services.UserService;
 import jakarta.validation.Valid;
-import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/users")
 public class UserController {
-
     final UserService userService;
-
     public UserController(UserService userService) {
         this.userService = userService;
     }
 
-    @GetMapping
-    public String getMessage() {
-        return "Bem vindo ao endpoint!";
+    @GetMapping("/")
+    public List<UserDTO> listarUsuarios() {
+        return userService.listarUsuarios();
     }
 
-    @PostMapping
-    public ResponseEntity<UserModel> saveUser(@RequestBody @Valid UserRecordDto userRecordDto) {
-        var userModel = new UserModel();
-        BeanUtils.copyProperties(userRecordDto, userModel);
-        return ResponseEntity.status(HttpStatus.CREATED).body(userService.save(userModel));
+    @GetMapping("/{id}")
+    public Optional<UserDTO> buscarUserPorId(@PathVariable Long id) {
+        return userService.buscarUsuarioPorID(id);
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<UserDTO> criarUsuario(@Valid @RequestBody UserCreateDTO user) {
+        UserDTO savedUser = userService.criarUsuario(user);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteUsuario(@PathVariable Long id) {
+        boolean deleted = userService.deleteUsuario(id);
+        if (deleted) {
+            return ResponseEntity.ok("Usuário deletado com sucesso!");
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuário não encontrado!");
     }
 }
