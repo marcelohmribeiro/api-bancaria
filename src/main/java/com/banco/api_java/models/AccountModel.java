@@ -28,14 +28,11 @@ public class AccountModel implements Serializable {
     @JoinColumn(name = "user_id", referencedColumnName = "id", unique = true, foreignKey = @ForeignKey(name = "fk_accounts_user"))
     private UserModel user;
 
-    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
-    private List<LedgerEntryModel> ledgerEntries;
-
     @OneToMany(mappedBy = "fromAccount")
-    private List<TransferModel> transfersSent;
+    private List<TransactionModel> transfersSent;
 
     @OneToMany(mappedBy = "toAccount")
-    private List<TransferModel> transfersReceived;
+    private List<TransactionModel> transfersReceived;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
@@ -43,6 +40,10 @@ public class AccountModel implements Serializable {
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getAccountNumber() {
@@ -77,31 +78,27 @@ public class AccountModel implements Serializable {
         this.user = user;
     }
 
-    public List<LedgerEntryModel> getLedgerEntries() {
-        return ledgerEntries;
-    }
-
-    public void setLedgerEntries(List<LedgerEntryModel> ledgerEntries) {
-        this.ledgerEntries = ledgerEntries;
-    }
-
-    public List<TransferModel> getTransfersSent() {
+    public List<TransactionModel> getTransfersSent() {
         return transfersSent;
     }
 
-    public void setTransfersSent(List<TransferModel> transfersSent) {
+    public void setTransfersSent(List<TransactionModel> transfersSent) {
         this.transfersSent = transfersSent;
     }
 
-    public List<TransferModel> getTransfersReceived() {
+    public List<TransactionModel> getTransfersReceived() {
         return transfersReceived;
     }
 
-    public void setTransfersReceived(List<TransferModel> transfersReceived) {
+    public void setTransfersReceived(List<TransactionModel> transfersReceived) {
         this.transfersReceived = transfersReceived;
     }
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }

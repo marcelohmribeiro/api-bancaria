@@ -1,6 +1,6 @@
 package com.banco.api_java.models;
 
-import com.banco.api_java.enums.Side;
+import com.banco.api_java.enums.TransactionType;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -9,15 +9,15 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "ledger_entries")
-public class LedgerEntryModel implements Serializable {
+@Table(name = "transactions")
+public class TransactionModel implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Side side; // DEBIT ou CREDIT
+    private TransactionType type; // PURCHASE, WITHDRAWAL, DEPOSIT, TRANSFER
 
     @Column(nullable = false, precision = 14, scale = 2)
     private BigDecimal amount;
@@ -26,12 +26,12 @@ public class LedgerEntryModel implements Serializable {
     private String description;
 
     @ManyToOne
-    @JoinColumn(name = "account_id", nullable = false)
-    private AccountModel account;
+    @JoinColumn(name = "to_account_id", nullable = false)
+    private AccountModel toAccount;
 
     @ManyToOne
-    @JoinColumn(name = "transfer_id")
-    private TransferModel transfer;
+    @JoinColumn(name = "from_account_id")
+    private AccountModel fromAccount; // Para transferências
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
@@ -41,12 +41,16 @@ public class LedgerEntryModel implements Serializable {
         return id;
     }
 
-    public Side getSide() {
-        return side;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public void setSide(Side side) {
-        this.side = side;
+    public TransactionType getType() {
+        return type;
+    }
+
+    public void setType(TransactionType type) {
+        this.type = type;
     }
 
     public BigDecimal getAmount() {
@@ -65,23 +69,27 @@ public class LedgerEntryModel implements Serializable {
         this.description = description;
     }
 
-    public AccountModel getAccount() {
-        return account;
+    public AccountModel getToAccount() {
+        return toAccount;
     }
 
-    public void setAccount(AccountModel account) {
-        this.account = account;
+    public void setToAccount(AccountModel toAccount) {
+        this.toAccount = toAccount;
     }
 
-    public TransferModel getTransfer() {
-        return transfer;
+    public AccountModel getFromAccount() {
+        return fromAccount;
     }
 
-    public void setTransfer(TransferModel transfer) {
-        this.transfer = transfer;
+    public void setFromAccount(AccountModel fromAccount) {
+        this.fromAccount = fromAccount;
     }
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }
