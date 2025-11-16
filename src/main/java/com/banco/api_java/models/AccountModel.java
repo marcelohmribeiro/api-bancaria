@@ -1,5 +1,6 @@
 package com.banco.api_java.models;
 
+import com.banco.api_java.enums.Status;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -21,8 +22,9 @@ public class AccountModel implements Serializable {
     @Column(nullable = false, precision = 14, scale = 2)
     private BigDecimal balance = BigDecimal.ZERO;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String status = "active";
+    private Status status = Status.ATIVO;
 
     @OneToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id", unique = true, foreignKey = @ForeignKey(name = "fk_accounts_user"))
@@ -62,11 +64,11 @@ public class AccountModel implements Serializable {
         this.balance = balance;
     }
 
-    public String getStatus() {
+    public Status getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 

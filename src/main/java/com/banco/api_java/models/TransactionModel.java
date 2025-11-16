@@ -17,7 +17,7 @@ public class TransactionModel implements Serializable {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private TransactionType type; // PURCHASE, WITHDRAWAL, DEPOSIT, TRANSFER
+    private TransactionType type;
 
     @Column(nullable = false, precision = 14, scale = 2)
     private BigDecimal amount;
@@ -31,7 +31,7 @@ public class TransactionModel implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "from_account_id")
-    private AccountModel fromAccount; // Para transferências
+    private AccountModel fromAccount;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)

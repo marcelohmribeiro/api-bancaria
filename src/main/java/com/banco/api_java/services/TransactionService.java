@@ -1,5 +1,6 @@
 package com.banco.api_java.services;
 
+import com.banco.api_java.enums.Status;
 import com.banco.api_java.enums.TransactionType;
 import com.banco.api_java.models.AccountModel;
 import com.banco.api_java.models.TransactionModel;
@@ -9,18 +10,18 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 @Service
 public class TransactionService {
-
     private final AccountRepository accountRepository;
     private final TransactionRepository transactionRepository;
-
+    private final NotificationService notificationService;
     public TransactionService(AccountRepository accountRepository,
-                           TransactionRepository transactionRepository) {
+                           TransactionRepository transactionRepository,
+                              NotificationService notificationService) {
         this.accountRepository = accountRepository;
         this.transactionRepository = transactionRepository;
+        this.notificationService = notificationService;
     }
 
     @Transactional
@@ -44,12 +45,8 @@ public class TransactionService {
         AccountModel to = accountRepository.findByAccountNumber(toAccountNumber)
                 .orElseThrow(() -> new IllegalArgumentException("Conta de destino não encontrada."));
 
-        if (!"active".equalsIgnoreCase(from.getStatus())) {
+        if (from.getStatus() != Status.ATIVO) {
             throw new IllegalStateException("Conta de origem não está ativa.");
-        }
-
-        if (!"active".equalsIgnoreCase(to.getStatus())) {
-            throw new IllegalStateException("Conta de destino não está ativa.");
         }
 
         // Checar saldo
@@ -71,6 +68,8 @@ public class TransactionService {
         tx.setDescription(description);
         tx.setFromAccount(from);
         tx.setToAccount(to);
-        return transactionRepository.save(tx);
+        tx = transactionRepository.save(tx);
+        notificationService.notifyIncomingTransaction(tx);
+        return tx;
     }
 }
