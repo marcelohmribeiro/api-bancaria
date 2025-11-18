@@ -7,8 +7,7 @@ import java.time.LocalDate;
 
 public record CardResponseDTO(
         Long id,
-        String numeroMascarado,
-        String ultimosDigitos,
+        String cardNumber,
         Side cardType,
         Status status,
         LocalDate expirationDate,

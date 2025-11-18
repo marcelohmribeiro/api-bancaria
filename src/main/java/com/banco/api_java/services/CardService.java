@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 public class CardService {
@@ -19,6 +20,10 @@ public class CardService {
     public CardService(CardRepository cardRepository, AccountRepository accountRepository) {
         this.cardRepository = cardRepository;
         this.accountRepository = accountRepository;
+    }
+
+    public List<CardModel> listarCartoesDoUsuario(Long userId) {
+        return cardRepository.findByAccountUserId(userId);
     }
 
     public CardModel criarCartao(String accountNumber, String cardType) {

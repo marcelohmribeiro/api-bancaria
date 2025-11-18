@@ -5,6 +5,7 @@ import com.banco.api_java.enums.TransactionType;
 import com.banco.api_java.models.AccountModel;
 import com.banco.api_java.models.TransactionModel;
 import com.banco.api_java.repositories.AccountRepository;
+import com.banco.api_java.repositories.PixKeyRepository;
 import com.banco.api_java.repositories.TransactionRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -16,12 +17,15 @@ public class TransactionService {
     private final AccountRepository accountRepository;
     private final TransactionRepository transactionRepository;
     private final NotificationService notificationService;
+    private final PixKeyRepository pixKeyRepository;
     public TransactionService(AccountRepository accountRepository,
                            TransactionRepository transactionRepository,
-                              NotificationService notificationService) {
+                              NotificationService notificationService,
+                              PixKeyRepository pixKeyRepository) {
         this.accountRepository = accountRepository;
         this.transactionRepository = transactionRepository;
         this.notificationService = notificationService;
+        this.pixKeyRepository = pixKeyRepository;
     }
 
     @Transactional

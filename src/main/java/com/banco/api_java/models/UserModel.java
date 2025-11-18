@@ -7,6 +7,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -27,6 +28,9 @@ public class UserModel implements Serializable {
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private AccountModel account;
+
+    @OneToMany(mappedBy = "user")
+    private List<AddressModel> address;
 
     @Enumerated(EnumType.STRING)
     private Role role = Role.USER;
@@ -77,6 +81,14 @@ public class UserModel implements Serializable {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public List<AddressModel> getAddress() {
+        return address;
+    }
+
+    public void setAddress(List<AddressModel> address) {
+        this.address = address;
     }
 
     public LocalDateTime getCreatedAt() {

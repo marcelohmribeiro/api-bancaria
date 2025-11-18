@@ -7,6 +7,8 @@ import com.banco.api_java.services.CardService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/cards")
 public class CardController {
@@ -22,19 +24,33 @@ public class CardController {
 
         CardModel card = cardService.criarCartao(dto.accountNumber(), dto.cardType());
 
-        String fullNumber = card.getCardNumber();
-        String ultimos4 = fullNumber.substring(fullNumber.length() - 4);
-        String numeroMascarado = "**** **** **** " + ultimos4;
-
         CardResponseDTO response = new CardResponseDTO(
                 card.getId(),
-                numeroMascarado,
-                ultimos4,
+                card.getCardNumber(),
                 card.getCardType(),
                 card.getStatus(),
                 card.getExpirationDate(),
                 card.getAccount().getAccountNumber()
         );
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<CardResponseDTO>> listarCartoesDoUsuario(@PathVariable Long userId) {
+
+        List<CardModel> cards = cardService.listarCartoesDoUsuario(userId);
+
+        List<CardResponseDTO> response = cards.stream().map(card ->
+                new CardResponseDTO(
+                    card.getId(),
+                    card.getCardNumber(),
+                    card.getCardType(),
+                    card.getStatus(),
+                    card.getExpirationDate(),
+                    card.getAccount().getAccountNumber()
+            )
+        ).toList();
 
         return ResponseEntity.ok(response);
     }
