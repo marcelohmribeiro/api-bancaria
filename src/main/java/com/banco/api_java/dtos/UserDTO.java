@@ -7,10 +7,21 @@ public record UserDTO(
         Long id,
         String email,
         String name,
-        Role role
+        Role role,
+        AccountDTO account
 ) {
-
     public UserDTO(UserModel user) {
-        this(user.getId(), user.getEmail(), user.getName(), user.getRole());
+        this(
+            user.getId(),
+            user.getEmail(),
+            user.getName(),
+            user.getRole(),
+            user.getAccount() != null ? new AccountDTO(
+                    user.getAccount().getId(),
+                    user.getAccount().getAgencyNumber(),
+                    user.getAccount().getAccountNumber(),
+                    user.getAccount().getBalance()
+            ) : null
+        );
     }
 }

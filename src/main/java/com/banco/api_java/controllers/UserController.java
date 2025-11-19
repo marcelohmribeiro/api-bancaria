@@ -1,5 +1,6 @@
 package com.banco.api_java.controllers;
 
+import com.banco.api_java.dtos.DepositDTO;
 import com.banco.api_java.dtos.UserCreateDTO;
 import com.banco.api_java.dtos.UserDTO;
 import com.banco.api_java.services.UserService;
@@ -15,6 +16,7 @@ import java.util.Optional;
 @RequestMapping("/users")
 public class UserController {
     final UserService userService;
+
     public UserController(UserService userService) {
         this.userService = userService;
     }
@@ -42,5 +44,16 @@ public class UserController {
             return ResponseEntity.ok("Usuário deletado com sucesso!");
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuário não encontrado!");
+    }
+
+    @PutMapping("/deposit")
+    public ResponseEntity<String> depositarSaldo(@RequestBody DepositDTO dto) {
+        boolean ok = userService.depositarSaldo(dto);
+
+        if (ok) {
+            return ResponseEntity.ok("Depósito realizado com sucesso!");
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body("Conta não encontrada!");
     }
 }

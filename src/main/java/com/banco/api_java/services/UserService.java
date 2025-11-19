@@ -1,5 +1,6 @@
 package com.banco.api_java.services;
 
+import com.banco.api_java.dtos.DepositDTO;
 import com.banco.api_java.dtos.UserCreateDTO;
 import com.banco.api_java.dtos.UserDTO;
 import com.banco.api_java.enums.Role;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.math.BigDecimal;
 
 @Service
 public class UserService {
@@ -52,6 +54,7 @@ public class UserService {
 
         var account = new AccountModel();
         account.setUser(savedUser);
+        account.setAgencyNumber(generateAgency());
         account.setAccountNumber(generateAccountNumber());
         accountRepository.save(account);
 
@@ -71,8 +74,32 @@ public class UserService {
                 .filter(user -> passwordEncoder.matches(password, user.getPassword()))
                 .map(UserDTO::new);
     }
+    
+    @Transactional
+    public boolean depositarSaldo(DepositDTO dto) {
+        var conta = accountRepository.findByAgencyNumberAndAccountNumber(
+                dto.agency(),
+                dto.account()
+        );
+
+        if (conta.isEmpty()) {
+            return false;
+        }
+
+        var account = conta.get();
+        BigDecimal novoSaldo = account.getBalance().add(BigDecimal.valueOf(dto.amount()));
+        account.setBalance(novoSaldo);
+
+        accountRepository.save(account);
+        return true;
+    }
 
     private String generateAccountNumber() {
         return String.format("%010d", Math.abs(UUID.randomUUID().hashCode()) % 1_000_000_0000L);
+    }
+
+    private String generateAgency() {
+        int num = Math.abs(UUID.randomUUID().hashCode()) % 10_000;
+        return String.format("%04d", num);
     }
 }

@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/transactions")
+@RequestMapping("/api/transactions")
 public class TransactionController {
 
     private final TransactionService transactionService;
@@ -17,7 +17,7 @@ public class TransactionController {
         this.transactionService = transactionService;
     }
 
-    @PostMapping
+    @PostMapping("/transfer")
     public ResponseEntity<TransactionDTO> transfer(@RequestBody TransactionRequestDTO req) {
         TransactionModel tx = transactionService.transfer(
                 req.fromAccountNumber(),

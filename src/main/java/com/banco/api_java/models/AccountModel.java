@@ -15,6 +15,9 @@ public class AccountModel implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
+    private String agencyNumber;
+
     @Column(nullable = false, unique = true)
     private String accountNumber;
 
@@ -44,6 +47,14 @@ public class AccountModel implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getAgencyNumber() {
+        return this.agencyNumber;
+    }
+
+    public void setAgencyNumber(String agencyNumber) {
+        this.agencyNumber = agencyNumber;
     }
 
     public String getAccountNumber() {
