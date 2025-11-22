@@ -1,5 +1,6 @@
 package com.banco.api_java.services;
 
+import com.banco.api_java.enums.Role;
 import com.banco.api_java.enums.TicketStatus;
 import com.banco.api_java.models.SupportTicketModel;
 import com.banco.api_java.models.UserModel;
@@ -8,6 +9,7 @@ import com.banco.api_java.repositories.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -53,5 +55,35 @@ public class SupportTicketService {
 
         ticket.setStatus(novoStatus);
         return supportTicketRepository.save(ticket);
+    }
+
+    @Transactional
+    public SupportTicketModel atribuirSuporteAoTicket(Long ticketId, Long adminId) {
+        SupportTicketModel ticket = supportTicketRepository.findById(ticketId)
+                .orElseThrow(() -> new IllegalArgumentException("Ticket não encontrado."));
+
+        UserModel admin = userRepository.findById(adminId)
+                .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado."));
+
+        if (admin.getRole() != Role.ADMIN) {
+            throw new IllegalArgumentException("Somente usuários com cargo ADMIN podem ser atribuídos ao ticket.");
+        }
+
+        if (admin.getAssignedTickets() == null) {
+            admin.setAssignedTickets(new java.util.ArrayList<>());
+        }
+        if (ticket.getAssignees() == null) {
+            ticket.setAssignees(new ArrayList<>());
+        }
+
+        if (!admin.getAssignedTickets().contains(ticket)) {
+            admin.getAssignedTickets().add(ticket);
+        }
+        if (!ticket.getAssignees().contains(admin)) {
+            ticket.getAssignees().add(admin);
+        }
+
+        userRepository.save(admin);
+        return ticket;
     }
 }

@@ -35,6 +35,14 @@ public class UserModel implements Serializable {
     @Enumerated(EnumType.STRING)
     private Role role = Role.USER;
 
+    @ManyToMany
+    @JoinTable(
+            name = "support_ticket_assignees",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "ticket_id")
+    )
+    private List<SupportTicketModel> assignedTickets;
+
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -89,6 +97,14 @@ public class UserModel implements Serializable {
 
     public void setAddress(List<AddressModel> address) {
         this.address = address;
+    }
+
+    public List<SupportTicketModel> getAssignedTickets() {
+        return assignedTickets;
+    }
+
+    public void setAssignedTickets(List<SupportTicketModel> assignedTickets) {
+        this.assignedTickets = assignedTickets;
     }
 
     public LocalDateTime getCreatedAt() {

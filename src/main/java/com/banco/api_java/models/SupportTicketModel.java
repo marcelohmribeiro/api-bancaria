@@ -6,6 +6,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "support_tickets")
@@ -28,6 +29,10 @@ public class SupportTicketModel implements Serializable {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private TicketStatus status = TicketStatus.ABERTO;
+
+    // 🔹 N:N – usuários que ATENDEM o chamado (analistas de suporte)
+    @ManyToMany(mappedBy = "assignedTickets")
+    private List<UserModel> assignees;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
@@ -67,6 +72,14 @@ public class SupportTicketModel implements Serializable {
 
     public void setStatus(TicketStatus status) {
         this.status = status;
+    }
+
+    public List<UserModel> getAssignees() {
+        return assignees;
+    }
+
+    public void setAssignees(List<UserModel> assignees) {
+        this.assignees = assignees;
     }
 
     public LocalDateTime getCreatedAt() {

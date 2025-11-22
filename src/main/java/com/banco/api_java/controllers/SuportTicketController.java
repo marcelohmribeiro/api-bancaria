@@ -55,4 +55,24 @@ public class SuportTicketController {
 
         return ResponseEntity.ok(response);
     }
+
+    @PostMapping("/{ticketId}/assign/{adminId}")
+    public ResponseEntity<SupportTicketResponseDTO> atribuirAdminAoTicket(
+            @PathVariable Long ticketId,
+            @PathVariable Long adminId
+    ) {
+        SupportTicketModel ticket =
+                supportTicketService.atribuirSuporteAoTicket(ticketId, adminId);
+
+        SupportTicketResponseDTO response = new SupportTicketResponseDTO(
+                ticket.getId(),
+                ticket.getUser().getId(),
+                ticket.getDescription(),
+                ticket.getCategory(),
+                ticket.getStatus(),
+                ticket.getCreatedAt()
+        );
+
+        return ResponseEntity.ok(response);
+    }
 }
