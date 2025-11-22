@@ -531,9 +531,11 @@ Content-Type: application/json
 ## 🗃️ Modelo de Dados
 
 ### Diagrama Entidade-Relacionamento (DER)
-
-<image src="./images/DER.png"/>
+<div>
+    <image src="./images/DER.png"/>
+</div>
 
 ### Modelo Entidade-Relacionamento (MER)
-
-<image src="./images/MER.png"/>
+<div>
+    <image src="./images/MER.png"/>
+</div>
