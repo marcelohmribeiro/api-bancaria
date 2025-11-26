@@ -76,14 +76,14 @@ public class UserService {
     }
     
     @Transactional
-    public boolean depositarSaldo(DepositDTO dto) {
+    public BigDecimal depositarSaldo(DepositDTO dto) {
         var conta = accountRepository.findByAgencyNumberAndAccountNumber(
                 dto.agency(),
                 dto.account()
         );
 
         if (conta.isEmpty()) {
-            return false;
+            return null;
         }
 
         var account = conta.get();
@@ -91,7 +91,30 @@ public class UserService {
         account.setBalance(novoSaldo);
 
         accountRepository.save(account);
-        return true;
+        return novoSaldo;
+    }
+
+    @Transactional
+    public BigDecimal sacarSaldo(String agency, String account, double amount) {
+        var conta = accountRepository.findByAgencyNumberAndAccountNumber(agency, account);
+
+        if (conta.isEmpty()) {
+            return null;
+        }
+
+        var accountModel = conta.get();
+
+        BigDecimal valor = BigDecimal.valueOf(amount);
+
+        if (accountModel.getBalance().compareTo(valor) < 0) {
+            return null; // saldo insuficiente
+        }
+
+        BigDecimal novoSaldo = accountModel.getBalance().subtract(valor);
+        accountModel.setBalance(novoSaldo);
+
+        accountRepository.save(accountModel);
+        return novoSaldo;
     }
 
     private String generateAccountNumber() {

@@ -9,7 +9,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -47,13 +50,38 @@ public class UserController {
     }
 
     @PutMapping("/deposit")
-    public ResponseEntity<String> depositarSaldo(@RequestBody DepositDTO dto) {
-        boolean ok = userService.depositarSaldo(dto);
+    public ResponseEntity<Map<String, String>> depositarSaldo(@RequestBody DepositDTO dto) {
 
-        if (ok) {
-            return ResponseEntity.ok("Depósito realizado com sucesso!");
+        BigDecimal novoSaldo = userService.depositarSaldo(dto);
+        Map<String, String> body = new HashMap<>();
+
+        if (novoSaldo != null) {
+            body.put("message", "Depósito realizado com sucesso!");
+            body.put("balance", novoSaldo.toString());
+            return ResponseEntity.ok(body);
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body("Conta não encontrada!");
+
+        body.put("message", "Conta não encontrada!");
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
+    }
+
+    @PutMapping("/withdraw")
+    public ResponseEntity<Map<String, String>> sacarSaldo(
+            @RequestParam String agency,
+            @RequestParam String account,
+            @RequestParam double amount
+    ) {
+        BigDecimal novoSaldo = userService.sacarSaldo(agency, account, amount);
+
+        Map<String, String> body = new HashMap<>();
+
+        if (novoSaldo != null) {
+            body.put("message", "Saque realizado com sucesso!");
+            body.put("balance", novoSaldo.toString());
+            return ResponseEntity.ok(body);
+        }
+
+        body.put("message", "Saldo insuficiente ou conta não encontrada!");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
     }
 }
